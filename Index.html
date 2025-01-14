@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Piano Alimentare Personalizzato</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #2563EB;
+            --secondary-color: #3A8DFF;
+            --text-color: #334155;
+            --light-bg: #f8fafc;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: #fff;
+            padding: 35px;
+            text-align: center;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(37,99,235,0.15);
+            animation: headerFadeIn 1s ease-out;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .header hr {
+            border: 0;
+            border-top: 1px solid rgba(255,255,255,0.3);
+            margin: 20px auto;
+            width: 80%;
+        }
+
+        .header p {
+            margin: 8px 0;
+            font-size: 16px;
+            opacity: .9;
+        }
+
+        .tab-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin-bottom: 25px;
+            animation: fadeIn .5s ease-out;
+        }
+
+        .tab-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 25px;
+            transition: transform .3s ease, box-shadow .3s ease;
+        }
+
+        .tab-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        .tab-card h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 24px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .nav-tab {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px;
+            animation: slideIn .5s ease-out;
+            backdrop-filter: blur(5px);
+            background: rgba(248,250,252,0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all .3s cubic-bezier(0.4,0,0.2,1);
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .nav-tab:hover {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            color: #fff;
+        }
+
+        .section {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            background: #fff;
+            padding: 30px;
+            overflow-y: auto;
+            z-index: 9999;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn .5s ease-out;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 9998;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            transition: all .3s ease;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all .3s ease;
+            z-index: 10000;
+        }
+
+        .info-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 15px;
+            background: linear-gradient(145deg, #fff, #f5f7fa);
+            border: 1px solid rgba(37,99,235,0.1);
+            border-radius: 12px;
+            transition: transform .3s ease;
+        }
+
+        .meal-section {
+            margin-bottom: 30px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .meal-title {
+            color: var(--primary-color);
+            font-size: 20px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .meal-content {
+            margin: 15px 0;
+        }
+
+        .meal-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .meal {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .meal h4 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .meal ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .meal li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .meal li:before {
+            content: "•";
+            color: var(--primary-color);
+            position: absolute;
+            left: 0;
+        }
+
+        .meal span {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .macros {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .macros h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .macro-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .day {
+            margin-bottom: 30px;
+        }
+
+        .day h2 {
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .info p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .disclaimer-form {
+            padding: 20px;
+            background: var(--light-bg);
+            border-radius: 12px;
+        }
+
+        .disclaimer-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .method-section {
+            background: var(--light-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .method-subtitle {
+            color: var(--text-color);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            .header { padding: 25px; }
+            .header h1 { font-size: 24px; }
+            .section { 
+                width: 95%;
+                padding: 20px;
+                max-height: 85vh;
+            }
+            .macro-grid { grid-template-columns: 1fr; }
+            .info-grid { grid-template-columns: 1fr; }
+            .nav-tab { padding: 12px; }
+            .action-buttons { 
+                flex-direction: column; 
+                width: 100%;
+            }
+            .close-btn {
+                padding: 10px 20px;
+                top: 10px;
+                right: 10px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+<div class="overlay"></div>
+<div class="container">
+    <div class="header">
+        <h1>Piano Alimentare Personalizzato</h1>
+        <hr>
+        <p>David Varutti</p>
+        <p>Consulente Alimentare</p>
+        <p>Certificato Fitness Nutritionist ISSA ID 40288</p>
+    </div>
+
+    <div class="tab-container">
+        <div class="tab-card">
+            <h2>Giorni della Settimana</h2>
+            <div class="nav-tabs">
+                <div class="nav-tab" onclick="openSection('monday')">
+                    <i class="fas fa-calendar-day"></i>Lunedì
+                </div>
+                <div class="nav-tab" onclick="openSection('tuesday')">
+                    <i class="fas fa-calendar-day"></i>Martedì
+                </div>
+                <div class="nav-tab" onclick="openSection('wednesday')">
+                    <i class="fas fa-calendar-day"></i>Mercoledì
+                </div>
+                <div class="nav-tab" onclick="openSection('thursday')">
+                    <i class="fas fa-calendar-day"></i>Giovedì
+                </div>
+                <div class="nav-tab" onclick="openSection('friday')">
+                    <i class="fas fa-calendar-day"></i>Venerdì
+                </div>
+                <div class="nav-tab" onclick="openSection('saturday')">
+                    <i class="fas fa-calendar-day"></i>Sabato
+                </div>
+                <div class="nav-tab" onclick="openSection('sunday')">
+                    <i class="fas fa-calendar-day"></i>Domenica
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-container">
+        <div class="tab-card">
+            <h2>Informazioni</h2>
+            <div class="nav-tabs">
+                <div class="nav-tab" onclick="openSection('client-info')">
+                    <i class="fas fa-user"></i>Dati Cliente
+                </div>
+                <div class="nav-tab" onclick="openSection('methodology')">
+                    <i class="fas fa-chart-line"></i>Il Nostro Metodo
+                </div>
+                <div class="nav-tab" onclick="openSection('disclaimer')">
+                    <i class="fas fa-shield-alt"></i>Liberatoria
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sections">
+<!-- Sezione Lunedì -->
+<div id="monday" class="section">
+    <button class="close-btn" onclick="closeSection()">Chiudi</button>
+    <div class="container">
+        <div class="day">
+            <div>
+                <span style="font-size: 20px;">&#128197;</span>
+                <h2>Lunedì</h2>
+            </div>
+            <div class="info">
+                <p>Calorie: 2708 kcal</p>
+                <p>Proteine: 184g | Grassi: 119g</p>
+                <p>Carboidrati: 226g</p>
+            </div>
+        </div>
+
+        <!-- Colazione -->
+        <div class="meal">
+            <h4><span>&#9200;</span>Colazione (7:00)</h4>
+            <ul>
+                <li><b>200g yogurt greco intero</b> <span>(Alternativa: 180g skyr)</span></li>
+                <li><b>40g avena</b> <span>(Alternativa: 40g muesli proteico)</span></li>
+                <li><b>30g proteine whey</b> <span>(Alternativa: 30g proteine caseine)</span></li>
+                <li><b>15g miele</b></li>
+                <li><b>100g mirtilli</b> <span>(Alternativa: 100g frutti di bosco)</span></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: cannella q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Spuntino -->
+        <div class="meal">
+            <h4><span>&#128077;</span>Spuntino (10:30)</h4>
+            <ul>
+                <li><b>40g frutta secca mista</b> <span>(mix di mandorle, noci, nocciole)</span></li>
+                <li><b>1 mela</b> <span>(Alternativa: 1 pera o 1 banana)</span></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: tè verde non zuccherato</li>
+            </ul>
+        </div>
+
+        <!-- Pranzo -->
+        <div class="meal">
+            <h4><span>&#127831;</span>Pranzo (13:00)</h4>
+            <ul>
+                <li><b>160g petto di pollo</b> <span>(Alternativa: 160g tacchino)</span></li>
+                <li><b>70g riso basmati</b> <span>(Alternativa: 70g riso integrale)</span></li>
+                <li><b>200g broccoli al vapore</b> <span>(Alternativa: 200g cavolfiori)</span></li>
+                <li><b>15ml olio EVO</b></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: spezie ed erbe aromatiche q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Pre-Workout -->
+        <div class="meal">
+            <h4><span>&#127939;</span>Pre-Workout (16:30)</h4>
+            <ul>
+                <li><b>1 banana (100g)</b></li>
+                <li><b>30g mandorle</b></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: caffè senza zucchero</li>
+            </ul>
+        </div>
+
+        <!-- Cena -->
+        <div class="meal">
+            <h4><span>&#127869;</span>Cena (20:00)</h4>
+            <ul>
+                <li><b>200g salmone fresco</b> <span>(Alternativa: 200g tonno fresco)</span></li>
+                <li><b>160g patate dolci</b> <span>(Alternativa: 150g patate normali)</span></li>
+                <li><b>250g spinaci</b> <span>(Alternativa: bietole)</span></li>
+                <li><b>12ml olio EVO</b></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: limone e erbe aromatiche q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Macros Dettagliati -->
+        <div class="macros">
+            <h3>Analisi Macronutrienti</h3>
+            <div class="macro-item">
+                <span>Calorie totali:</span>
+                <span>2708 kcal</span>
+            </div>
+            <div class="macro-item">
+                <span>Proteine:</span>
+                <span>184g (27%)</span>
+            </div>
+            <div class="macro-item">
+                <span>Carboidrati:</span>
+                <span>226g (33%)</span>
+            </div>
+            <div class="macro-item">
+                <span>Grassi:</span>
+                <span>119g (40%)</span>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Sezione Martedì -->
+<div id="tuesday" class="section">
+    <button class="close-btn" onclick="closeSection()">Chiudi</button>
+    <div class="container">
+        <div class="day">
+            <div>
+                <span style="font-size: 20px;">&#128197;</span>
+                <h2>Martedì</h2>
+            </div>
+            <div class="info">
+                <p>Calorie: 2695 kcal</p>
+                <p>Proteine: 181g | Grassi: 121g</p>
+                <p>Carboidrati: 219g</p>
+            </div>
+        </div>
+
+        <!-- Colazione -->
+        <div class="meal">
+            <h4><span>&#9200;</span>Colazione (7:00)</h4>
+            <ul>
+                <li><b>3 uova intere</b></li>
+                <li><b>2 fette pane integrale</b> <span>(Alternativa: pane di segale)</span></li>
+                <li><b>60g avocado</b></li>
+                <li><b>150g pomodorini</b></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: erbe aromatiche q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Spuntino -->
+        <div class="meal">
+            <h4><span>&#128077;</span>Spuntino (10:30)</h4>
+            <ul>
+                <li><b>150g yogurt greco 0%</b> <span>(Alternativa: 130g skyr)</span></li>
+                <li><b>30g granola proteica</b></li>
+                <li><b>100g mirtilli</b> <span>(Alternativa: lamponi)</span></li>
+                <li><b>20g miele</b></li>
+            </ul>
+        </div>
+
+        <!-- Pranzo -->
+        <div class="meal">
+            <h4><span>&#127831;</span>Pranzo (13:00)</h4>
+            <ul>
+                <li><b>180g merluzzo</b> <span>(Alternativa: 180g nasello)</span></li>
+                <li><b>70g quinoa</b> <span>(Alternativa: 70g bulgur)</span></li>
+                <li><b>200g zucchine</b></li>
+                <li><b>15ml olio EVO</b></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: limone e erbe aromatiche q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Pre-Workout -->
+        <div class="meal">
+            <h4><span>&#127939;</span>Pre-Workout (16:30)</h4>
+            <ul>
+                <li><b>2 fette pane integrale</b></li>
+                <li><b>40g marmellata frutti di bosco</b></li>
+                <li><b>25g burro di arachidi</b></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: tè verde non zuccherato</li>
+            </ul>
+        </div>
+
+        <!-- Cena -->
+        <div class="meal">
+            <h4><span>&#127869;</span>Cena (20:00)</h4>
+            <ul>
+                <li><b>220g petto di tacchino</b> <span>(Alternativa: 220g petto di pollo)</span></li>
+                <li><b>150g patate al forno</b></li>
+                <li><b>200g fagiolini</b> <span>(Alternativa: asparagi)</span></li>
+                <li><b>12ml olio EVO</b></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: spezie q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Macros Dettagliati -->
+        <div class="macros">
+            <h3>Analisi Macronutrienti</h3>
+            <div class="macro-item">
+                <span>Calorie totali:</span>
+                <span>2695 kcal</span>
+            </div>
+            <div class="macro-item">
+                <span>Proteine:</span>
+                <span>181g (27%)</span>
+            </div>
+            <div class="macro-item">
+                <span>Carboidrati:</span>
+                <span>219g (32%)</span>
+            </div>
+            <div class="macro-item">
+                <span>Grassi:</span>
+                <span>121g (41%)</span>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Sezione Mercoledì -->
+<div id="wednesday" class="section">
+    <button class="close-btn" onclick="closeSection()">Chiudi</button>
+    <div class="container">
+        <div class="day">
+            <div>
+                <span style="font-size: 20px;">&#128197;</span>
+                <h2>Mercoledì</h2>
+            </div>
+            <div class="info">
+                <p>Calorie: 2711 kcal</p>
+                <p>Proteine: 176g | Grassi: 125g</p>
+                <p>Carboidrati: 221g</p>
+            </div>
+        </div>
+
+        <!-- Colazione -->
+        <div class="meal">
+            <h4><span>&#9200;</span>Colazione (7:00)</h4>
+            <ul>
+                <li><b>Pancakes Proteici:</b></li>
+                <li>- 100g albumi</li>
+                <li>- 30g farina d'avena</li>
+                <li>- 30g proteine whey</li>
+                <li>- 1 uovo intero</li>
+                <li><b>Topping:</b></li>
+                <li>- 20g sciroppo d'acero</li>
+                <li>- 25g burro di arachidi</li>
+                <li>- 100g frutti di bosco</li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: cannella q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Spuntino -->
+        <div class="meal">
+            <h4><span>&#128077;</span>Spuntino (10:30)</h4>
+            <ul>
+                <li><b>120g tonno al naturale</b></li>
+                <li><b>40g crackers di segale</b></li>
+                <li><b>50g avocado</b></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: limone e pepe q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Pranzo -->
+        <div class="meal">
+            <h4><span>&#127831;</span>Pranzo (13:00)</h4>
+            <ul>
+                <li><b>160g petto di pollo</b></li>
+                <li><b>70g pasta integrale</b></li>
+                <li><b>200g melanzane grigliate</b></li>
+                <li><b>15ml olio EVO</b></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: basilico e pomodorini q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Pre-Workout -->
+        <div class="meal">
+            <h4><span>&#127939;</span>Pre-Workout (16:30)</h4>
+            <ul>
+                <li><b>1 banana (100g)</b></li>
+                <li><b>30g mandorle</b></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: caffè senza zucchero</li>
+            </ul>
+        </div>
+
+        <!-- Cena -->
+        <div class="meal">
+            <h4><span>&#127869;</span>Cena (20:00)</h4>
+            <ul>
+                <li><b>220g pesce spada alla griglia</b> <span>(Alternativa: 200g salmone in scatola al naturale)</span></li>
+                <li><b>170g patate dolci</b> <span>(Alternativa: 50g pane integrale)</span></li>
+                <li><b>230g zucchine trifolate</b> <span>(Alternativa: carote crude)</span></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: olio EVO (10ml)</li>
+            </ul>
+        </div>
+
+        <!-- Macros Dettagliati -->
+        <div class="macros">
+            <h3>Analisi Macronutrienti</h3>
+            <div class="macro-item">
+                <span>Calorie totali:</span>
+                <span>2711 kcal</span>
+            </div>
+            <div class="macro-item">
+                <span>Proteine:</span>
+                <span>176g (26%)</span>
+            </div>
+            <div class="macro-item">
+                <span>Carboidrati:</span>
+                <span>221g (33%)</span>
+            </div>
+            <div class="macro-item">
+                <span>Grassi:</span>
+                <span>125g (41%)</span>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Sezione Giovedì -->
+<div id="thursday" class="section">
+    <button class="close-btn" onclick="closeSection()">Chiudi</button>
+    <div class="container">
+        <div class="day">
+            <div>
+                <span style="font-size: 20px;">&#128197;</span>
+                <h2>Giovedì</h2>
+            </div>
+            <div class="info">
+                <p>Calorie: 2698 kcal</p>
+                <p>Proteine: 178g | Grassi: 123g</p>
+                <p>Carboidrati: 223g</p>
+            </div>
+        </div>
+
+        <!-- Colazione -->
+        <div class="meal">
+            <h4><span>&#9200;</span>Colazione (7:00)</h4>
+            <ul>
+                <li><b>180g ricotta vaccina</b> <span>(Alternativa: 200g yogurt greco)</span></li>
+                <li><b>40g fiocchi d'avena</b></li>
+                <li><b>30g proteine whey</b></li>
+                <li><b>120g frutti di bosco</b></li>
+                <li><b>15g miele</b></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: cannella q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Spuntino -->
+        <div class="meal">
+            <h4><span>&#128077;</span>Spuntino (10:30)</h4>
+            <ul>
+                <li><b>2 fette pane integrale</b></li>
+                <li><b>120g tonno al naturale</b></li>
+                <li><b>60g avocado</b></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: limone e pepe q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Pranzo -->
+        <div class="meal">
+            <h4><span>&#127831;</span>Pranzo (13:00)</h4>
+            <ul>
+                <li><b>160g petto di tacchino</b> <span>(Alternativa: 160g petto di pollo)</span></li>
+                <li><b>70g riso basmati</b></li>
+                <li><b>200g peperoni grigliati</b></li>
+                <li><b>15ml olio EVO</b></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: erbe aromatiche q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Pre-Workout -->
+        <div class="meal">
+            <h4><span>&#127939;</span>Pre-Workout (16:30)</h4>
+            <ul>
+                <li><b>1 banana (100g)</b></li>
+                <li><b>30g mandorle</b></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: caffè senza zucchero</li>
+            </ul>
+        </div>
+
+        <!-- Cena -->
+        <div class="meal">
+            <h4><span>&#127869;</span>Cena (20:00)</h4>
+            <ul>
+                <li><b>220g branzino</b> <span>(Alternativa: 220g orata)</span></li>
+                <li><b>170g patate dolci</b></li>
+                <li><b>200g asparagi</b></li>
+                <li><b>12ml olio EVO</b></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: limone e erbe aromatiche q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Macros Dettagliati -->
+        <div class="macros">
+            <h3>Analisi Macronutrienti</h3>
+            <div class="macro-item">
+                <span>Calorie totali:</span>
+                <span>2698 kcal</span>
+            </div>
+            <div class="macro-item">
+                <span>Proteine:</span>
+                <span>178g (26%)</span>
+            </div>
+            <div class="macro-item">
+                <span>Carboidrati:</span>
+                <span>223g (33%)</span>
+            </div>
+            <div class="macro-item">
+                <span>Grassi:</span>
+                <span>123g (41%)</span>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Sezione Venerdì -->
+<div id="friday" class="section">
+    <button class="close-btn" onclick="closeSection()">Chiudi</button>
+    <div class="container">
+        <div class="day">
+            <div>
+                <span style="font-size: 20px;">&#128197;</span>
+                <h2>Venerdì</h2>
+            </div>
+            <div class="info">
+                <p>Calorie: 2726 kcal</p>
+                <p>Proteine: 172g | Grassi: 137g</p>
+                <p>Carboidrati: 209g</p>
+            </div>
+        </div>
+
+        <!-- Colazione -->
+        <div class="meal">
+            <h4><span>&#9200;</span>Colazione (7:00)</h4>
+            <ul>
+                <li><b>170g ricotta vaccina</b> <span>(Alternativa: 200g yogurt greco intero)</span></li>
+                <li><b>25g pistacchi non salati</b> <span>(Alternativa: 25g mandorle)</span></li>
+                <li><b>120g frutti di bosco misti</b> <span>(Alternativa: 130g mirtilli o lamponi)</span></li>
+                <li><b>10g cacao amaro in polvere</b></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: stevia o cannella q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Spuntino -->
+        <div class="meal">
+            <h4><span>&#128077;</span>Spuntino (10:30)</h4>
+            <ul>
+                <li><b>120g tofu affumicato</b> <span>(Alternativa: 100g seitan o 150g tempeh)</span></li>
+                <li><b>40g crackers di segale</b> <span>(Alternativa: 35g gallette di riso integrale)</span></li>
+                <li><b>25g hummus di ceci</b> <span>(Alternativa: 25g crema di mandorle)</span></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: erbe aromatiche q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Pranzo -->
+        <div class="meal">
+            <h4><span>&#127831;</span>Pranzo (13:00)</h4>
+            <ul>
+                <li><b>230g salmone fresco</b> <span>(Alternative: 2 lattine di salmone/sgombro al naturale da 125g, peso sgocciolato ~200g)</span></li>
+                <li><b>55g farro</b> <span>(Alternativa: 55g orzo o 50g quinoa)</span></li>
+                <li><b>200g asparagi</b> <span>(Alternativa: 200g broccoli o fagiolini)</span></li>
+                <li><b>70g avocado</b> <span>(Alternativa: 12ml olio EVO)</span></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: limone e erbe aromatiche q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Pre-Workout -->
+        <div class="meal">
+            <h4><span>&#127939;</span>Pre-Workout (16:30)</h4>
+            <ul>
+                <li><b>2 kiwi (140g)</b> <span>(Alternativa: 1 pera media 150g o 1 mela 150g)</span></li>
+                <li><b>22g noci di macadamia</b> <span>(Alternativa: 25g noci o 25g anacardi)</span></li>
+                <li><b>15g uvetta</b> <span>(Alternativa: 15g datteri secchi)</span></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: tè verde non zuccherato</li>
+            </ul>
+        </div>
+
+        <!-- Cena -->
+        <div class="meal">
+            <h4><span>&#127869;</span>Cena (20:00)</h4>
+            <ul>
+                <li><b>220g tempeh marinato</b> <span>(Alternative: 2 lattine di tonno al naturale da 125g, peso sgocciolato ~200g)</span></li>
+                <li><b>130g ceci cotti</b> <span>(Alternativa: 130g lenticchie cotte o 130g piselli)</span></li>
+                <li><b>250g cavolfiore al vapore</b> <span>(Alternativa: 250g zucchine)</span></li>
+                <li><b>8ml olio EVO</b></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: zenzero e curcuma q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Macros Dettagliati -->
+        <div class="macros">
+            <h3>Analisi Macronutrienti</h3>
+            <div class="macro-item">
+                <span>Calorie totali:</span>
+                <span>2726 kcal</span>
+            </div>
+            <div class="macro-item">
+                <span>Proteine:</span>
+                <span>172g (25%)</span>
+            </div>
+            <div class="macro-item">
+                <span>Carboidrati:</span>
+                <span>209g (31%)</span>
+            </div>
+            <div class="macro-item">
+                <span>Grassi:</span>
+                <span>137g (44%)</span>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Sezione Sabato -->
+<div id="saturday" class="section">
+    <button class="close-btn" onclick="closeSection()">Chiudi</button>
+    <div class="container">
+        <div class="day">
+            <div>
+                <span style="font-size: 20px;">&#128197;</span>
+                <h2>Sabato</h2>
+            </div>
+            <div class="info">
+                <p>Calorie: 2619 kcal</p>
+                <p>Proteine: 219g | Grassi: 92g</p>
+                <p>Carboidrati: 237g</p>
+            </div>
+        </div>
+
+        <!-- Colazione -->
+        <div class="meal">
+            <h4><span>&#9200;</span>Colazione (9:00)</h4>
+            <ul>
+                <li><b>Pancakes Proteici:</b></li>
+                <li>- 100g albumi</li>
+                <li>- 40g farina d'avena</li>
+                <li>- 30g proteine in polvere vaniglia</li>
+                <li>- 1 uovo intero</li>
+                <li>- 100g yogurt greco 0%</li>
+                <li>- 5g lievito per dolci</li>
+                <li><b>Topping:</b></li>
+                <li>- 100g frutti di bosco freschi <span>(Alternativa: 100g mirtilli o fragole)</span></li>
+                <li>- 20g sciroppo d'acero <span>(Alternativa: 20g miele)</span></li>
+                <li>- 25g burro di arachidi</li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: cannella, vaniglia q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Spuntino -->
+        <div class="meal">
+            <h4><span>&#128077;</span>Spuntino (11:30)</h4>
+            <ul>
+                <li><b>150g cottage cheese</b> <span>(Alternativa: 150g yogurt greco)</span></li>
+                <li><b>45g noci</b> <span>(Alternativa: 45g mandorle)</span></li>
+                <li><b>1 mela media</b> <span>(Alternativa: 1 pera)</span></li>
+                <li><b>15g miele</b></li>
+            </ul>
+        </div>
+
+        <!-- Pranzo -->
+        <div class="meal">
+            <h4><span>&#127831;</span>Pranzo (14:00)</h4>
+            <ul>
+                <li><b>220g pollo alla griglia</b> <span>(Alternativa: 220g tacchino)</span></li>
+                <li><b>80g riso basmati</b> <span>(Alternativa: 80g quinoa)</span></li>
+                <li><b>200g verdure grigliate miste</b></li>
+                <li><b>12ml olio EVO</b></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: erbe aromatiche q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Cena -->
+        <div class="meal">
+            <h4><span>&#127869;</span>Cena Standard (20:00)</h4>
+            <ul>
+                <li><b>220g merluzzo</b> <span>(Alternativa: 220g orata)</span></li>
+                <li><b>220g patate al forno</b></li>
+                <li><b>200g verdure miste</b></li>
+                <li><b>12ml olio EVO</b></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: limone, erbe aromatiche q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Macros Dettagliati -->
+        <div class="macros">
+            <h3>Analisi Macronutrienti</h3>
+            <div class="macro-item">
+                <span>Calorie totali:</span>
+                <span>2619 kcal</span>
+            </div>
+            <div class="macro-item">
+                <span>Proteine:</span>
+                <span>219g (33%)</span>
+            </div>
+            <div class="macro-item">
+                <span>Carboidrati:</span>
+                <span>237g (36%)</span>
+            </div>
+            <div class="macro-item">
+                <span>Grassi:</span>
+                <span>92g (31%)</span>
+            </div>
+        </div>
+
+        <!-- Nota Pasto Libero -->
+        <div class="note">
+            <h4>&#128221; NOTA PASTO LIBERO</h4>
+            <ul>
+                <li>È possibile sostituire la cena con un pasto libero, o spostare lo sgarro a domenica</li>
+                <li>Durante il pasto libero:
+                    <ul>
+                        <li>Godersi il pasto senza restrizioni</li>
+                        <li>Mantenere gli altri pasti della giornata come da piano</li>
+                        <li>Riprendere il piano regolare dal pasto successivo</li>
+                    </ul>
+                </li>
+                <li>I valori nutrizionali indicati si riferiscono al piano standard (escluso pasto libero)</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- Sezione Domenica -->
+<div id="sunday" class="section">
+    <button class="close-btn" onclick="closeSection()">Chiudi</button>
+    <div class="container">
+        <div class="day">
+            <div>
+                <span style="font-size: 20px;">&#128197;</span>
+                <h2>Domenica</h2>
+            </div>
+            <div class="info">
+                <p>Calorie: 2688 kcal</p>
+                <p>Proteine: 216g | Grassi: 95g</p>
+                <p>Carboidrati: 242g</p>
+            </div>
+        </div>
+
+        <!-- Colazione -->
+        <div class="meal">
+            <h4><span>&#9200;</span>Colazione (9:00)</h4>
+            <ul>
+                <li><b>French Toast Proteici:</b></li>
+                <li>- 100g pane integrale (4 fette)</li>
+                <li>- 150g albumi</li>
+                <li>- 1 uovo intero</li>
+                <li>- 25g proteine in polvere vaniglia</li>
+                <li>- 100g yogurt greco 0%</li>
+                <li><b>Topping:</b></li>
+                <li>- 100g frutti rossi <span>(Alternativa: 100g mirtilli o lamponi)</span></li>
+                <li>- 20g sciroppo d'acero <span>(Alternativa: 20g miele)</span></li>
+                <li>- 20g burro di arachidi</li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: cannella, vaniglia q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Spuntino -->
+        <div class="meal">
+            <h4><span>&#128077;</span>Spuntino (11:30)</h4>
+            <ul>
+                <li><b>150g yogurt greco intero</b> <span>(Alternativa: 150g skyr)</span></li>
+                <li><b>40g granola proteica</b></li>
+                <li><b>1 banana media</b> <span>(Alternativa: 1 mela grande)</span></li>
+                <li><b>10g miele</b></li>
+            </ul>
+        </div>
+
+        <!-- Pranzo -->
+        <div class="meal">
+            <h4><span>&#127831;</span>Pranzo (14:00)</h4>
+            <ul>
+                <li><b>220g manzo magro a scelta tra:</b></li>
+                <li>- Bistecca (scamone, filetto, controfiletto)</li>
+                <li>- Tagliata di manzo</li>
+                <li>- Carne macinata magra (<5% grassi)</li>
+                <li><span>Alternativa: 250g braciole di maiale</span></li>
+                <li><b>60g riso venere</b> <span>(Alternativa: 60g riso integrale)</span></li>
+                <li><b>200g verdure grigliate</b></li>
+                <li><b>12ml olio EVO</b></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: erbe aromatiche, limone q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Cena -->
+        <div class="meal">
+            <h4><span>&#127869;</span>Cena Standard (20:00)</h4>
+            <ul>
+                <li><b>220g salmone al forno</b> <span>(Alternativa: 220g spigola)</span></li>
+                <li><b>170g patate dolci</b></li>
+                <li><b>200g verdure al vapore</b></li>
+                <li><b>10ml olio EVO</b></li>
+                <li style="margin-top: 10px; color: #555;">Opzionale: erbe aromatiche, limone q.b.</li>
+            </ul>
+        </div>
+
+        <!-- Macros Dettagliati -->
+        <div class="macros">
+            <h3>Analisi Macronutrienti</h3>
+            <div class="macro-item">
+                <span>Calorie totali:</span>
+                <span>2688 kcal</span>
+            </div>
+            <div class="macro-item">
+                <span>Proteine:</span>
+                <span>216g (32%)</span>
+            </div>
+            <div class="macro-item">
+                <span>Carboidrati:</span>
+                <span>242g (36%)</span>
+            </div>
+            <div class="macro-item">
+                <span>Grassi:</span>
+                <span>95g (32%)</span>
+            </div>
+        </div>
+
+        <!-- Nota Pasto Libero -->
+        <div class="note">
+            <h4>&#128221; NOTA PASTO LIBERO</h4>
+            <ul>
+                <li>Se non utilizzato sabato, è possibile effettuare il pasto libero sostituendo uno dei pasti principali della domenica</li>
+                <li>Durante il pasto libero:
+                    <ul>
+                        <li>Godersi il pasto senza restrizioni</li>
+                        <li>Mantenere gli altri pasti della giornata come da piano</li>
+                        <li>Riprendere il piano regolare dal pasto successivo</li>
+                    </ul>
+                </li>
+                <li>I valori nutrizionali indicati si riferiscono al piano standard (escluso pasto libero)</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- Sezione Dati Cliente -->
+<div id="client-info" class="section">
+    <button class="close-btn" onclick="closeSection()">Chiudi</button>
+    <div class="info-card">
+        <h2>Dati Cliente</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Nome:</label>
+                <span>Daniele Blasutti</span>
+            </div>
+            <div class="info-item">
+                <label>Email:</label>
+                <span>danielerodeano@gmail.com</span>
+            </div>
+            <div class="info-item">
+                <label>Età:</label>
+                <span>36 anni</span>
+            </div>
+            <div class="info-item">
+                <label>Peso:</label>
+                <span>66 kg</span>
+            </div>
+            <div class="info-item">
+                <label>Altezza:</label>
+                <span>170 cm</span>
+            </div>
+            <div class="info-item">
+                <label>Massa grassa:</label>
+                <span>17%</span>
+            </div>
+            <div class="info-item">
+                <label>Massa muscolare:</label>
+                <span>42%</span>
+            </div>
+            <div class="info-item">
+                <label>Misure:</label>
+                <span>Vita: 81 cm | Fianchi: 92 cm | Petto: 95 cm</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-card">
+        <h2>Valori Energetici</h2>
+        <p class="subtitle">Analisi dettagliata del fabbisogno calorico giornaliero</p>
+        <div class="macro-grid">
+            <div class="macro-card">
+                <div class="macro-icon">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <div class="macro-value">1515.5</div>
+                <div class="macro-label">BMR (kcal)</div>
+                <div class="macro-description">Metabolismo Basale</div>
+            </div>
+            
+            <div class="macro-card">
+                <div class="macro-icon">
+                    <i class="fas fa-running"></i>
+                </div>
+                <div class="macro-value">2340</div>
+                <div class="macro-label">TDEE (kcal)</div>
+                <div class="macro-description">Fabbisogno Energetico Totale</div>
+            </div>
+
+            <div class="macro-card">
+                <div class="macro-icon">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <div class="macro-value">2700</div>
+                <div class="macro-label">Target (kcal)</div>
+                <div class="macro-description">Fabbisogno Calorico Suggerito</div>
+            </div>
+
+            <div class="macro-card">
+                <div class="macro-icon">
+                    <i class="fas fa-arrow-trend-up"></i>
+                </div>
+                <div class="macro-value">+360</div>
+                <div class="macro-label">Surplus (kcal)</div>
+                <div class="macro-description">Surplus per Massa Magra</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="macro-summary">
+        <h2>Parametri Alimentari Giornalieri</h2>
+        <p class="subtitle">I seguenti parametri sono calcolati in base alla richiesta di aumento di massa magra</p>
+        <div class="macro-grid">
+            <div class="macro-card">
+                <div class="macro-icon">
+                    <i class="fas fa-drumstick-bite"></i>
+                </div>
+                <div class="macro-value">190g</div>
+                <div class="macro-label">Proteine</div>
+                <div class="macro-description">2.9g/kg peso corporeo</div>
+            </div>
+            <div class="macro-card">
+                <div class="macro-icon">
+                    <i class="fas fa-bread-slice"></i>
+                </div>
+                <div class="macro-value">225g</div>
+                <div class="macro-label">Carboidrati</div>
+                <div class="macro-description">33% delle calorie totali</div>
+            </div>
+            <div class="macro-card">
+                <div class="macro-icon">
+                    <i class="fas fa-oil-can"></i>
+                </div>
+                <div class="macro-value">125g</div>
+                <div class="macro-label">Grassi</div>
+                <div class="macro-description">41% delle calorie totali</div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Sezione Metodologia -->
+<div id="methodology" class="section">
+    <button class="close-btn" onclick="closeSection()">Chiudi</button>
+    <div class="info-card">
+        <h2 class="method-title">NOTE CONCLUSIVE E APPROCCIO METODOLOGICO</h2>
+        
+        <!-- Il Nostro Approccio -->
+        <div class="method-section">
+            <h3 class="method-subtitle">
+                <i class="fas fa-bullseye"></i>
+                Il Nostro Approccio
+            </h3>
+            <p>Piano strutturato secondo le linee guida ISSA per l'ottimizzazione della composizione corporea e del benessere generale, con focus su:</p>
+            <ul class="method-list">
+                <li>• Gestione scientifica dei macronutrienti</li>
+                <li>• Timing nutrizionale strategico</li>
+                <li>• Selezione qualitativa degli alimenti</li>
+                <li>• Supporto ottimale per l'attività fisica</li>
+            </ul>
+        </div>
+
+        <!-- Gestione Macronutrienti -->
+        <div class="method-section">
+            <h3 class="method-subtitle">
+                <i class="fas fa-fire"></i>
+                Gestione Macronutrienti
+            </h3>
+            
+            <div class="macro-details">
+                <div>
+                    <h4>Carboidrati (225g/giorno - 33% delle calorie totali)</h4>
+                    <ul class="method-list">
+                        <li>• Distribuzione strategica intorno all'attività fisica</li>
+                        <li>• Selezione fonti a basso indice glicemico</li>
+                        <li>• Timing ottimizzato per il recupero</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4>Proteine (190g/giorno - 2.9g/kg peso corporeo)</h4>
+                    <ul class="method-list">
+                        <li>• Fonti selezionate per valore biologico</li>
+                        <li>• Rotazione per varietà nutrizionale</li>
+                        <li>• Timing per supporto muscolare</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4>Grassi (125g/giorno - 41% delle calorie totali)</h4>
+                    <ul class="method-list">
+                        <li>• Selezione qualitativa (EVO, grass-fed, cocco)</li>
+                        <li>• Distribuzione strategica nei pasti</li>
+                        <li>• Supporto assorbimento nutrienti</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preparazione Alimenti -->
+        <div class="method-section">
+            <h3 class="method-subtitle">
+                <i class="fas fa-utensils"></i>
+                Preparazione Alimenti
+            </h3>
+            <ul class="method-list">
+                <li>
+                    <strong>Cotture a basse temperature</strong>
+                    <span class="method-note">Per evitare la formazione di composti tossici come acrilammide e AGEs</span>
+                </li>
+                <li>
+                    <strong>Evitare scottature eccessive delle carni</strong>
+                    <span class="method-note">La reazione di Maillard spinta e la carbonizzazione producono IPA</span>
+                </li>
+                <li>
+                    <strong>Temperature controllate</strong>
+                    <span class="method-note">Preservare struttura proteica ed evitare denaturazione eccessiva</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Tempistiche -->
+        <div class="method-section">
+            <h3 class="method-subtitle">
+                <i class="fas fa-clock"></i>
+                Tempistiche
+            </h3>
+            <ul class="method-list">
+                <li>
+                    <strong>Intervalli tra i pasti:</strong>
+                    <ul>
+                        <li>• 3-4 ore tra i pasti principali</li>
+                        <li>• Timing pre/post workout ottimizzato</li>
+                        <li>• Adattabile alla routine mantenendo le proporzioni</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Idratazione -->
+        <div class="method-section">
+            <h3 class="method-subtitle">
+                <i class="fas fa-tint"></i>
+                Idratazione
+            </h3>
+            <ul class="method-list">
+                <li>
+                    <strong>2-2.5L quotidiani</strong>
+                    <span class="method-note">Aumentare in base all'attività fisica</span>
+                </li>
+                <li>
+                    <strong>Timing: 30 min prima/dopo i pasti</strong>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Note sugli Alimenti -->
+        <div class="method-section">
+            <h3 class="method-subtitle">
+                <i class="fas fa-apple-alt"></i>
+                Note sugli Alimenti
+            </h3>
+            <ul class="method-list">
+                <li>
+                    <strong>Selezione e Qualità:</strong>
+                    <ul>
+                        <li>• Preferenza per alimenti integrali</li>
+                        <li>• Selezione accurata delle fonti proteiche</li>
+                        <li>• Rotazione delle fonti alimentari</li>
+                        <li>• Attenzione alla qualità dei grassi</li>
+                        <li>• Verdure abbondanti ad ogni pasto principale</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Monitoraggio -->
+        <div class="method-section">
+            <h3 class="method-subtitle">
+                <i class="fas fa-chart-line"></i>
+                Monitoraggio
+            </h3>
+            <ul class="method-list">
+                <li>
+                    <strong>Indicatori da osservare:</strong>
+                    <ul>
+                        <li>• Livelli energetici</li>
+                        <li>• Qualità del recupero post-allenamento</li>
+                        <li>• Composizione corporea</li>
+                        <li>• Performance in palestra</li>
+                        <li>• Benessere generale</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Adattamenti -->
+        <div class="method-section">
+            <h3 class="method-subtitle">
+                <i class="fas fa-sync-alt"></i>
+                Adattamenti
+            </h3>
+            <ul class="method-list">
+                <li>
+                    <strong>Il piano verrà modificato in base a:</strong>
+                    <ul>
+                        <li>• Risposta individuale</li>
+                        <li>• Progressione negli obiettivi</li>
+                        <li>• Energia e recupero</li>
+                        <li>• Feedback del corpo</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- Sezione Liberatoria -->
+<div id="disclaimer" class="section">
+    <button class="close-btn" onclick="closeSection()">Chiudi</button>
+    <div class="info-card">
+        <h2 class="method-title">Liberatoria e Consenso Informato</h2>
+
+        <form id="disclaimerForm" class="disclaimer-form" action="https://formsubmit.co/096905028e96b1d1a3989fef36c8b083" method="POST">
+            <!-- Campi nascosti per FormSubmit -->
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_template" value="table">
+            <input type="hidden" id="documentId" name="documentId">
+            <input type="hidden" name="_subject" value="Liberatoria Piano Alimentare">
+            <input type="hidden" name="_autoresponse" value="true">
+            <input type="hidden" name="_auto_response_message" value="Gentile Cliente,
+
+Grazie per aver compilato la liberatoria.
+
+Ecco un riepilogo dei punti accettati:
+1. Questo piano alimentare rappresenta un suggerimento nutrizionale personalizzato e non una prescrizione medica
+2. Le indicazioni fornite sono basate sulle informazioni ricevute dal cliente e sulle attuali linee guida in ambito nutrizionale
+3. Non sostituisce in alcun modo il parere, la diagnosi o il trattamento medico professionale
+4. Per qualsiasi problema di salute si consiglia di consultare il proprio medico di fiducia
+
+Cordiali saluti,
+David Varutti
+Consulente Alimentare
+Certificato Fitness Nutritionist ISSA">
+
+            <div class="disclaimer-text">
+                Il sottoscritto David Varutti, in qualità di Consulente Alimentare e Fitness Nutritionist ISSA, dichiara che:
+            </div>
+
+         <div class="disclaimer-points">
+                <div class="disclaimer-point">
+                    <input type="checkbox" id="point1" name="punto1" required>
+                    <label for="point1">Questo piano alimentare rappresenta un suggerimento nutrizionale personalizzato e non una prescrizione medica</label>
+                </div>
+                <div class="disclaimer-point">
+                    <input type="checkbox" id="point2" name="punto2" required>
+                    <label for="point2">Le indicazioni fornite sono basate sulle informazioni ricevute dal cliente e sulle attuali linee guida in ambito nutrizionale</label>
+                </div>
+                <div class="disclaimer-point">
+                    <input type="checkbox" id="point3" name="punto3" required>
+                    <label for="point3">Non sostituisce in alcun modo il parere, la diagnosi o il trattamento medico professionale</label>
+                </div>
+                <div class="disclaimer-point">
+                    <input type="checkbox" id="point4" name="punto4" required>
+                    <label for="point4">Per qualsiasi problema di salute si consiglia di consultare il proprio medico di fiducia</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Email per ricevere copia della liberatoria:</label>
+                <input type="email" 
+                       name="emailCliente" 
+                       required 
+                       class="form-input" 
+                       placeholder="Inserisci la tua email"
+                       autocomplete="email"
+                       inputmode="email">
+            </div>
+
+            <input type="hidden" name="data" id="dataField">
+
+            <div class="action-buttons">
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i> Accetta e Invia
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+    </div> <!-- Chiusura div sections -->
+</div> <!-- Chiusura div container -->
+<script>
+function openSection(sectionId) {
+    // Chiudi tutte le sezioni
+    document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // Apri la sezione cliccata
+    document.getElementById(sectionId).classList.add('active');
+    
+    // Attiva l'overlay
+    document.querySelector('.overlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeSection() {
+    document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active');
+    });
+    document.querySelector('.overlay').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Inizializzazione data e ID documento
+window.onload = function() {
+    if(document.getElementById('dataField')) {
+        const currentDate = new Date().toLocaleDateString('it-IT');
+        document.getElementById('dataField').value = currentDate;
+    }
+    if(document.getElementById('documentId')) {
+        const docId = generateDocumentId();
+        document.getElementById('documentId').value = docId;
+    }
+};
+
+function generateDocumentId() {
+    const year = new Date().getFullYear();
+    const randomNum = Math.floor(Math.random() * 999) + 1;
+    const formattedNum = String(randomNum).padStart(3, '0');
+    return `LIB-${year}-${formattedNum}`;
+}
+
+function validateForm() {
+    const checkboxes = document.querySelectorAll('#disclaimerForm input[type="checkbox"]');
+    let isValid = true;
+    
+    checkboxes.forEach(checkbox => {
+        if (!checkbox.checked) {
+            isValid = false;
+            checkbox.parentElement.style.border = '2px solid #dc3545';
+        } else {
+            checkbox.parentElement.style.border = 'none';
+        }
+    });
+    
+    if (!isValid) {
+        alert('Per favore, accetta tutti i punti della liberatoria.');
+        return false;
+    }
+    return true;
+}
+</script>
+</body>
+</html>
